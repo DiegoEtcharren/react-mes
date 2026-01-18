@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  /* Main Colors: */
+  --color-primary: #E31E24;
+  --color-primary-hover: #b9151a;
+
+  /* UI Colors: */
+  --color-surface-light: #ffffff;
+  --color-surface-background: #f8fafc;
+  --color-input-border: #1e293b;
+  --color-text-main: #0f172a;
+  --color-text-muted: #64748b;
+
+  /* Fonts */
+  --font-sans: "Inter", sans-serif;
+}
+
+@layer base {
+  html, body, #root {
+    @apply min-h-screen;
+  }
+
+  body {
+    @apply bg-surface-background text-text-main font-sans;
+  }
+}
+
