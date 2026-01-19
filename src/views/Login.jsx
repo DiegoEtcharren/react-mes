@@ -1,9 +1,26 @@
-import { useState } from "react";
+import { createRef, useState } from "react";
 import { Eye, EyeOff } from 'lucide-react';
+import Alerts from "../components/Alerts";
 import BrandLogo from "../components/BrandLogo";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Login() {
+  const usernameRef = createRef();
+  const passwordRef = createRef();
   const [showPassword, setShowPassword] = useState(false);
+  const [errores, setErrores] = useState([]);
+  const { login } = useAuth({
+    middleware : 'guest',
+    url: '/'
+  });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const datos = {
+      username: usernameRef.current.value,
+      password: passwordRef.current.value,
+    };
+    login(datos, setErrores);
+  };
   return (
     <div className="bg-white m-auto rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] overflow-hidden p-8 sm:p-10 relative border border-slate-200">
       {/* Top Red Bar Accent */}
@@ -19,7 +36,12 @@ export default function Login() {
           Please authenticate to continue
         </p>
       </div>
-      <form className="flex flex-col gap-5">
+      <form
+        className="flex flex-col gap-5"
+        onSubmit={handleSubmit}
+        noValidate
+      >
+        {errores ? errores.map(error => <Alerts key={error}> {error}</Alerts>) : null}
         <div className="flex flex-col gap-2">
           <label
             className="text-slate-700 text-[11px] font-bold uppercase tracking-wide ml-1"
@@ -27,16 +49,17 @@ export default function Login() {
           >
             Username
           </label>
-            <input
-              name="username"
-              type="text"
-              id="username"
-              className="flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-slate-800
+          <input
+            name="username"
+            type="text"
+            id="username"
+            className="flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-slate-800
                        focus:outline-none focus:ring-0 border-2 border-[#1e293b] bg-white
                        focus:border-primary h-12 placeholder:text-slate-400 px-4
                        text-sm font-medium leading-normal transition-all duration-200"
-              placeholder="Enter your username"
-            />
+            placeholder="Enter your username"
+            ref={usernameRef}
+          />
         </div>
         <div className="flex flex-col gap-2">
           <label
@@ -55,6 +78,7 @@ export default function Login() {
                        focus:border-[#E31E24] h-12 placeholder:text-slate-400 px-4 pr-12
                        text-sm font-medium leading-normal transition-all duration-200"
               placeholder="Enter your password"
+              ref={passwordRef}
             />
             <button
               type="button"
