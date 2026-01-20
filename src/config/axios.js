@@ -5,10 +5,12 @@ const axiosClient = axios.create({
     headers : {
         'Accept' : 'application/json',
         'X-Requested-With' : 'XMLHttpRequest',
-
+        'Content-Type': 'application/json',
     },
     withCredentials : true
 });
 
-export default axiosClient;
+axiosClient.defaults.xsrfCookieName = 'XSRF-TOKEN';
+axiosClient.defaults.xsrfHeaderName = 'X-XSRF-TOKEN';
 
+export default axiosClient;

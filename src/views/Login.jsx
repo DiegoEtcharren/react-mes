@@ -2,6 +2,7 @@ import { createRef, useState } from "react";
 import { Eye, EyeOff } from 'lucide-react';
 import Alerts from "../components/Alerts";
 import BrandLogo from "../components/BrandLogo";
+import axiosClient from "../config/axios";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Login() {
@@ -10,16 +11,29 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errores, setErrores] = useState([]);
   const { login } = useAuth({
-    middleware : 'guest',
-    url: '/'
+    middleware: "guest",
+    url: "/",
   });
+
+  const testSanctum = async () => {
+    try {
+        const res = await axiosClient.get('/sanctum/csrf-cookie');
+        console.log('✅ Status:', res.status);
+    } catch (error) {
+        // This will print the actual response if one exists
+        console.log('❌ Error Response:', error.response);
+        console.log('❌ Error Data:', error.response?.data);
+    }
+}
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const datos = {
+    const data = {
       username: usernameRef.current.value,
       password: passwordRef.current.value,
     };
-    login(datos, setErrores);
+    login(data, setErrores);
+    // testSanctum();
+
   };
   return (
     <div className="bg-white m-auto rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] overflow-hidden p-8 sm:p-10 relative border border-slate-200">
@@ -36,12 +50,10 @@ export default function Login() {
           Please authenticate to continue
         </p>
       </div>
-      <form
-        className="flex flex-col gap-5"
-        onSubmit={handleSubmit}
-        noValidate
-      >
-        {errores ? errores.map(error => <Alerts key={error}> {error}</Alerts>) : null}
+      <form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
+        {errores
+          ? errores.map((error) => <Alerts key={error}> {error}</Alerts>)
+          : null}
         <div className="flex flex-col gap-2">
           <label
             className="text-slate-700 text-[11px] font-bold uppercase tracking-wide ml-1"
